@@ -109,10 +109,16 @@ export const listAssetOnContract = async (assetData: AssetData): Promise<string>
 // Function to check if the user has approved the contract to spend their tokens
 export const checkAllowance = async (tokenAddress: string, amount: string): Promise<boolean> => {
   try {
-    const contract = await getContract();
-    const userAddress = await contract.signer.getAddress();
+    if (!window.ethereum) {
+      throw new Error("Please install MetaMask or another Web3 wallet");
+    }
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const userAddress = await signer.getAddress();
     
     // This is a simplified check - adjust based on your token contract
+    const contract = new ethers.Contract(tokenAddress, CONTRACT_CONFIG.abi, signer);
     const allowance = await contract.allowance(userAddress, CONTRACT_CONFIG.contractAddress);
     return allowance >= ethers.parseEther(amount);
   } catch (error) {
