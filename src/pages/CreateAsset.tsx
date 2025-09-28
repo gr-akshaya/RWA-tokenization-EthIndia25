@@ -10,7 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Upload, ArrowLeft, FileText, X, CheckCircle, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { uploadEncryptedFile, uploadMultipleEncryptedFiles, isWalletConnected, UploadResult } from "@/lib/lighthouse";
-import { listAssetOnContract, AssetData } from "@/lib/contract";
+import { listAsset } from "@/lib/contracts";
 
 const CreateAsset = () => {
   const { toast } = useToast();
@@ -160,19 +160,10 @@ const CreateAsset = () => {
 
       // Get form data
       const formData = new FormData(e.target as HTMLFormElement);
-      const assetData: AssetData = {
-        title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        category: formData.get('category') as string,
-        location: formData.get('location') as string,
-        tokenName: formData.get('token-name') as string,
-        tokenSymbol: formData.get('token-symbol') as string,
-        totalValue: parseFloat(formData.get('total-value') as string),
-        tokenSupply: parseInt(formData.get('token-supply') as string),
-        minInvestment: parseFloat(formData.get('min-investment') as string),
-        imageHashes: [],
-        documentHashes: []
-      };
+      //const assetId = Math.floor(Math.random() * 1000000); // Generate a random asset ID
+      const assetId = 1;
+      const pricePerToken = parseFloat(formData.get('total-value') as string) / parseInt(formData.get('token-supply') as string);
+      const totalSupply = parseInt(formData.get('token-supply') as string);
 
       // Step 1: Upload images to Lighthouse
       if (uploadedImages.length > 0) {
@@ -189,8 +180,6 @@ const CreateAsset = () => {
           }
         );
 
-        assetData.imageHashes = imageResults.map(result => result.hash);
-        
         toast({
           title: "Images Uploaded!",
           description: `${imageResults.length} images uploaded and encrypted`,
@@ -211,8 +200,6 @@ const CreateAsset = () => {
             setUploadProgress(prev => ({ ...prev, [fileKey]: progress }));
           }
         );
-
-        assetData.documentHashes = documentResults.map(result => result.hash);
         
         toast({
           title: "Documents Uploaded!",
@@ -226,14 +213,14 @@ const CreateAsset = () => {
         description: "Creating RWA token on the blockchain",
       });
 
-      const tokenId = await listAssetOnContract(assetData);
+      const txHash = await listAsset(assetId, pricePerToken, totalSupply);
       
       // Clear progress
       setUploadProgress({});
       
       toast({
         title: "Asset Listed Successfully!",
-        description: `Your RWA token (ID: ${tokenId}) has been created and is now available on the marketplace.`,
+        description: `Your RWA token (ID: ${assetId}) has been created and is now available on the marketplace. Transaction: ${txHash.slice(0, 10)}...`,
       });
 
       // Reset form

@@ -3,11 +3,14 @@ import USDT_ABI from "../abi/USDT.json";
 import RWA_ABI from "../abi/RWA.json";
 
 // Core Testnet2 RPC URL
-const CORE_TESTNET2_RPC_URL = "https://rpc.test2.btcs.network";
+const CORE_TESTNET2_RPC_URL = "https://evmrpc-testnet.0g.ai";
 
 // Contract addresses
-const USDT_CONTRACT_ADDRESS = "0x2A0452216398b7667e5eB12243Db68575ED3cF1B";
-const RWA_CONTRACT_ADDRESS = "0xa892f8D31a30Da10400bb4CFf9302a2c32E49131";
+// const USDT_CONTRACT_ADDRESS = "0x2A0452216398b7667e5eB12243Db68575ED3cF1B";
+// const RWA_CONTRACT_ADDRESS = "0xa892f8D31a30Da10400bb4CFf9302a2c32E49131";
+
+const USDT_CONTRACT_ADDRESS = "0xC2d0324Fcc64dC8c805eFCcA297b01b2E7176Da2";
+const RWA_CONTRACT_ADDRESS = "0x5637430507792c16d1ED3942d42366FbA374fA9d";
 
 // USDT has 6 decimals
 const USDT_DECIMALS = 6;
@@ -73,6 +76,37 @@ export const approveUSDT = async (spenderAddress: string, amount: bigint): Promi
     return tx.hash;
   } catch (error) {
     console.error("Error approving USDT:", error);
+    throw error;
+  }
+};
+
+// Function to list an asset on the RWA contract
+export const listAsset = async (
+  assetId: number,
+  pricePerToken: number,
+  totalSupply: number
+): Promise<string> => {
+  try {
+    const rwaContract = await getRWAContract();
+    
+    // Convert price per token to USDT (with 6 decimals)
+    const pricePerTokenUSDT = convertUSDToUSDT(pricePerToken);
+    
+    console.log(`Listing asset ${assetId} with price ${pricePerToken} USDT per token and total supply ${totalSupply}`);
+    
+    const tx = await rwaContract.listAsset(
+      assetId,
+      pricePerTokenUSDT,
+      totalSupply
+    );
+    console.log("Asset listing transaction sent:", tx.hash);
+    
+    const receipt = await tx.wait();
+    console.log("Asset listing confirmed:", receipt);
+    
+    return tx.hash;
+  } catch (error) {
+    console.error("Error listing asset:", error);
     throw error;
   }
 };

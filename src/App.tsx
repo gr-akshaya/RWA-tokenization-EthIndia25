@@ -7,6 +7,8 @@ import { WalletProvider } from "@/contexts/WalletContext";
 import Home from "./pages/Home";
 import CreateAsset from "./pages/CreateAsset";
 import Marketplace from "./pages/Marketplace";
+import Portfolio from "./pages/Portfolio";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreateAsset />} />
             <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/analytics" element={<Analytics />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

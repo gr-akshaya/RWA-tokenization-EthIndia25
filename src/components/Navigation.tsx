@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Package, Store, Plus } from "lucide-react";
+import { Package, Store, Plus, BarChart3, Wallet } from "lucide-react";
 import { ConnectWallet } from "./ConnectWallet";
 
 export const Navigation = () => {
@@ -33,6 +33,26 @@ export const Navigation = () => {
                 <Link to="/marketplace" className="flex items-center gap-2">
                   <Store className="h-4 w-4" />
                   Marketplace
+                </Link>
+              </Button>
+              
+              <Button
+                variant={isActive("/portfolio") ? "secondary" : "ghost"}
+                asChild
+              >
+                <Link to="/portfolio" className="flex items-center gap-2">
+                  <Wallet className="h-4 w-4" />
+                  Portfolio
+                </Link>
+              </Button>
+              
+              <Button
+                variant={isActive("/analytics") ? "secondary" : "ghost"}
+                asChild
+              >
+                <Link to="/analytics" className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Analytics
                 </Link>
               </Button>
               
