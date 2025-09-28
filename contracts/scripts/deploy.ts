@@ -21,6 +21,7 @@ async function main() {
   console.log("✅ Granted factory LISTING_MANAGER_ROLE");
 
   // 4️⃣ Deploy a demo ERC3643 token & listing
+  // This will automatically assign roles to the creator
   const tx = await factory.createTokenAndListing(
     "RealEstateFund",
     "REF",
